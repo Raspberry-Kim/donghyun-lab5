@@ -1,4 +1,4 @@
-/* 동현콥: 동현랭으로 속도를 정하고, 원본 SWF를 고치지 않은 채 바깥 SWF로 띄운다. */
+/* 동현콥: 동현랭으로 속력을 정하고, 원본 SWF를 고치지 않은 채 바깥 SWF로 띄운다. */
 (function(){
 const $=s=>document.querySelector(s);
 const SWF='swf/helicopter-game.swf';
@@ -36,27 +36,27 @@ $('#save').onclick=()=>{const a=document.createElement('a');a.href=URL.createObj
 $('#open').onchange=async e=>{const f=e.target.files[0];if(!f)return;code.value=(await f.text()).replace(/\r/g,'').replace(/\n$/,'');codeChanged();e.target.value='';};
 $('#run').onclick=()=>takeoff();
 
-/* ---------- 속도 규약 ---------- */
+/* ---------- 속력 규약 ---------- */
 function parseSpeed(out){
   const tok=out.split(/\s+/).filter(Boolean).map(Number);
-  if(!tok.length) return {v:DEFAULT,note:'출력이 없어 원본 속도 100으로 난다.'};
-  if(tok.length>1) return {err:`정수를 ${tok.length}개 출력했다. 속도 하나만 출력하자.`};
+  if(!tok.length) return {v:DEFAULT,note:'출력이 없어 원본 속력 100으로 난다.'};
+  if(tok.length>1) return {err:`정수를 ${tok.length}개 출력했다. 속력 하나만 출력하자.`};
   const v=tok[0];
-  if(!Number.isInteger(v)||v<MIN||v>MAX) return {err:`속도 ${v}은 쓸 수 없다. ${MIN}부터 ${MAX}까지만 된다.`};
+  if(!Number.isInteger(v)||v<MIN||v>MAX) return {err:`속력 ${v}은 쓸 수 없다. ${MIN}부터 ${MAX}까지만 된다.`};
   return {v};
 }
 const fpsOf=v=>BASE_FPS*v/100;
 function speedCard(v){
   const f=fpsOf(v), x=v/100;
-  $('#speed-card').innerHTML=[['속도',v+'%'],['초당 프레임',(Number.isInteger(f)?f:f.toFixed(1))],['원본 대비',v===100?'원본 그대로':(+x.toFixed(2))+'배']].map(([a,b])=>`<div><span>${a}</span><strong>${b}</strong></div>`).join('');
-  $('#stamp-speed').innerHTML=`${v} <span>% 속도</span>`;
+  $('#speed-card').innerHTML=[['속력',v+'%'],['초당 프레임',(Number.isInteger(f)?f:f.toFixed(1))],['원본 대비',v===100?'원본 그대로':(+x.toFixed(2))+'배']].map(([a,b])=>`<div><span>${a}</span><strong>${b}</strong></div>`).join('');
+  $('#stamp-speed').innerHTML=`${v} <span>% 속력</span>`;
 }
 const result=(t,kind)=>{const r=$('#result');r.textContent=t;r.dataset.kind=kind||'';};
 const status=(t,kind)=>{const s=$('#status');s.textContent=t;s.dataset.kind=kind||'';};
 
 /* ---------- 원본 확인과 실행 ---------- */
 const hex=buf=>[...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,'0')).join('');
-let verified=null, player=null, speed=DEFAULT, swfUrl=null;
+let verified=null, player=null, speed=DEFAULT, swfUrl=null, labelUrl=null;
 async function verify(){
   if(verified!==null) return verified;
   try{
@@ -81,23 +81,24 @@ async function launch(v){
   player=window.RufflePlayer.newest().createPlayer();
   player.id='player';
   stage.appendChild(player);
-  const wrapper=makeWrapper(fpsOf(v),swfUrl);
+  if(!labelUrl) labelUrl=URL.createObjectURL(new Blob([Uint8Array.from(atob(COP_LABEL_SWF),c=>c.charCodeAt(0))],{type:'application/x-shockwave-flash'}));
+  const wrapper=makeWrapper(fpsOf(v),swfUrl,labelUrl);
   await player.ruffle().load({
     data:wrapper, swfFileName:'donghyun-cop.swf', base:new URL('./',location.href).href,
     autoplay:'on', unmuteOverlay:'hidden', splashScreen:false, contextMenu:'off', letterbox:'on',
-    allowFullscreen:false, openUrlMode:'confirm', allowNetworking:'all', warnOnUnsupportedContent:false,
+    allowFullscreen:false, openUrlMode:'deny', allowNetworking:'all', warnOnUnsupportedContent:false,
     showSwfDownload:false, quality:'high', publicPath:'./ruffle/'
   });
-  speed=v; status(`속도 ${v}% · 누르면 시작`);
+  speed=v; status(`속력 ${v}% · 누르면 시작`);
 }
 function takeoff(){
   let out;
   try{ out=Donghyun.run(code.value,{maxSteps:300000}).output; }
   catch(e){ result(`동현랭 오류${e.line?` (${e.line}줄)`:''}: ${e.message}`,'error'); status('동현랭 오류','error'); return; }
   const p=parseSpeed(out);
-  if(p.err){ result('속도 규약 오류: '+p.err,'error'); status('속도 규약 오류','error'); return; }
+  if(p.err){ result('속력 규약 오류: '+p.err,'error'); status('속력 규약 오류','error'); return; }
   speedCard(p.v);
-  result((p.note?p.note+' ':'')+`속도 ${p.v}%(초당 ${+fpsOf(p.v).toFixed(1)}프레임)로 이륙한다. 게임 화면을 누르면 시작된다.`);
+  result((p.note?p.note+' ':'')+`속력 ${p.v}%(초당 ${+fpsOf(p.v).toFixed(1)}프레임)로 이륙한다. 게임 화면을 누르면 시작된다.`);
   launch(p.v);
 }
 

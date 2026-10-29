@@ -14,7 +14,7 @@ const html=src('index.html')
   .replace('__SERIES_NAV__',()=>src('series.html'))
   .replace('__BRAND_ICON__',()=>src('brand-icon.txt').trim())
   .replace('<link rel="stylesheet" href="./style.css">',()=>`<style>${css}</style>`)
-  .replace('<script src="./app.js"></script>',()=>['donghyun.js','examples.js','wrapper.js','app.js'].map(n=>'<script>'+src(n).replaceAll('</script','<\\/script')+'</script>').join('\n'));
+  .replace('<script src="./app.js"></script>',()=>['donghyun.js','examples.js','label.js','wrapper.js','app.js'].map(n=>'<script>'+src(n).replaceAll('</script','<\\/script')+'</script>').join('\n'));
 fs.writeFileSync(path.join(root,'index.html'),html);
 fs.rmSync(out,{recursive:true,force:true});fs.mkdirSync(out,{recursive:true});
 fs.writeFileSync(path.join(out,'index.html'),html);

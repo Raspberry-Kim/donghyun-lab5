@@ -6,7 +6,7 @@ const U=process.env.U||'http://localhost:8765/';
   const p=await b.newPage({viewport:{width:1280,height:1000}});
   const errs=[];p.on('pageerror',e=>errs.push(e.message));p.on('console',m=>{if(m.type()==='error')errs.push(m.text())});
   await p.addInitScript(()=>{const A=window.AudioContext;window.__ac=[];window.AudioContext=class extends A{constructor(...a){super(...a);window.__ac.push(this)}};});
-  await p.goto(U);await p.waitForFunction(()=>document.querySelector('#status').textContent.includes('Ruffle')||document.querySelector('#status').textContent.includes('다'),null,{timeout:30000});
+  await p.goto(U);await p.waitForFunction(()=>document.querySelector('#status').textContent.includes('Ruffle')||document.querySelector('#status').textContent.includes('다')||document.querySelector('#status').textContent.includes('누르면'),null,{timeout:30000});
   await p.waitForTimeout(2500);
   console.log('status',await p.textContent('#status'),'|',await p.textContent('#hash'));
   await p.screenshot({path:'d-0.png'});

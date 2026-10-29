@@ -1,4 +1,4 @@
-// 속도 50/100/200·오류 규약을 확인하고 화면을 남긴다.
+// 속력 50/100/200·오류 규약을 확인하고 화면을 남긴다.
 const {chromium}=require('playwright');
 const U=process.env.U||'http://localhost:8765/';
 (async()=>{
@@ -7,7 +7,7 @@ const U=process.env.U||'http://localhost:8765/';
   const errs=[];p.on('pageerror',e=>errs.push(e.message));p.on('console',m=>{if(m.type()==='error')errs.push(m.text())});
   await p.addInitScript(()=>{const A=window.AudioContext;window.__ac=[];window.AudioContext=class extends A{constructor(...a){super(...a);window.__ac.push(this)}};});
   await p.goto(U);
-  await p.waitForFunction(()=>/속도 \d+%/.test(document.querySelector('#status').textContent),null,{timeout:40000});
+  await p.waitForFunction(()=>/속력 \d+%/.test(document.querySelector('#status').textContent),null,{timeout:40000});
   await p.waitForTimeout(3000);
   console.log('init',await p.textContent('#status'),'|',await p.textContent('#hash'),'|',await p.textContent('#speed-card'));
   await p.screenshot({path:'s-100.png'});
