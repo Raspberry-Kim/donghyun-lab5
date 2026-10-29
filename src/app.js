@@ -89,7 +89,7 @@ async function launch(v){
   if(!dogUrl&&typeof COP_DOG_SWF!=='undefined') dogUrl=URL.createObjectURL(new Blob([Uint8Array.from(atob(COP_DOG_SWF),c=>c.charCodeAt(0))],{type:'application/x-shockwave-flash'}));
   const wrapper=makeWrapper(fpsOf(v),swfUrl,labelUrl,dogUrl);
   await player.ruffle().load({
-    data:wrapper, swfFileName:'donghyun-cop.swf', base:new URL('./',location.href).href,
+    data:wrapper, swfFileName:'donghyuncop.swf', base:new URL('./',location.href).href,
     autoplay:'on', unmuteOverlay:'hidden', splashScreen:false, contextMenu:'off', letterbox:'on',
     allowFullscreen:false, openUrlMode:'deny', allowNetworking:'all', warnOnUnsupportedContent:false,
     showSwfDownload:false, quality:'high', publicPath:'./ruffle/', ...fontCfg

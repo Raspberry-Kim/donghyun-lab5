@@ -1,6 +1,6 @@
 # 동현콥 상단 띠 SWF 만들기 (원본 SWF는 고치지 않는다)
 # 원본 'COPYRIGHT: SEETHRU.CO.UK' 자리를 같은 초록 줄무늬로 덮고, 동현콥 세그먼트 글자(tools/seg.py, MIT)로
-# 'TAKE FLIGHT WITH DONGHYUN-COP!'을 쓴다. 바깥 SWF가 이 파일을 원본 _level1의 54번 층(저작권 버튼 53번 바로 위,
+# 'TAKE FLIGHT WITH DONGHYUNCOP!'을 쓴다. 바깥 SWF가 이 파일을 원본 _level1의 54번 층(저작권 버튼 53번 바로 위,
 # 동굴 벽 100번 아래)에 불러온다. 결과: src/label.js (base64)
 # 쓰는 법: python3 tools/make-label.py
 import sys, base64, struct, os
@@ -9,7 +9,7 @@ import seg
 from shapely.ops import unary_union
 from shapely.geometry.polygon import orient
 
-TEXT = 'TAKE FLIGHT WITH DONGHYUN-COP!'
+TEXT = 'TAKE FLIGHT WITH DONGHYUNCOP!'
 TW = 20                      # 1픽셀 = 20 twip
 CAP = 8.6                    # 글자 높이(px). 원본 글자 높이(약 8.5px)에 맞춤
 GAP, SPACE = 1.55, 4.0       # 글자 사이(px)와 낱말 사이(px)
