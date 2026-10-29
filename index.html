@@ -608,15 +608,22 @@ window.DONGHYUN_SEGFONT_B64='AAEAAAAKAIAAAwAgT1MvMkfURhMAAAEoAAAAYGNtYXAAmADMAAA
     const reg=(r)=>act(0x96,[4,r]);
     const store=(r)=>act(0x87,[r]);  // 레지스터 0: 이름, 1: 앞 다섯 글자, 2: 클립
     const pushNum=(x)=>{const b=new ArrayBuffer(8),v=new DataView(b);v.setFloat64(0,x,true);const a=[...new Uint8Array(b)];return act(0x96,[6,...a.slice(4),...a.slice(0,4)]);};
-    const tf=[['ra',100],['rb',99],['ga',70.6],['gb',0],['ba',100],['bb',38]];
-    const tintCall=[...reg(2),...pushStr('copTint'),...pushInt(1),0x4F,
-      ...tf.flatMap(([k,x])=>[...pushStr(k),...(Number.isInteger(x)?pushInt(x):pushNum(x))]),...pushInt(tf.length),0x43,
+    const tintCall=(tf)=>[...reg(2),...pushStr('copTint'),...pushInt(1),0x4F,
+      ...tf.flatMap(([k,x])=>[...pushStr(k),...(Number.isInteger(x)&&x>=0?pushInt(x):pushNum(x))]),...pushInt(tf.length),0x43,
       ...pushInt(1),...reg(2),...pushInt(1),...pushStr('Color'),0x40,...pushStr('setTransform'),0x52,0x17];
+    const wallTint=tintCall([['ra',100],['rb',99],['ga',70.6],['gb',0],['ba',100],['bb',38]]);
+    // 시작 문구(CLICK TO START, CLICK AND HOLD…): 원본 45번 층의 이름 없는 클립(글자 0x33CCFF·0x33FFFF)을 한 가지 색 0xF09A7C로.
+    // 크림 0xC9B48C와 포동이 옷 빨강 0xE83B32의 중간(0xD9785F)을 검은 바탕에서 잘 보이게 밝힌 색이다. AS에서 45번 층은 getDepth()==45-16384.
+    const textTint=tintCall([['ra',0],['rb',240],['ga',0],['gb',154],['ba',0],['bb',124]]);
     const isPre=(w)=>[...reg(1),...pushStr(w),0x49];
-    const tcond=[...isPre('wallA'),...isPre('wallB'),0x11,...isPre('obsta'),0x11,...isPre('block'),0x11,
-      ...reg(2),0x44,...pushStr('movieclip'),0x49,0x10,
+    const okClip=[...reg(2),0x44,...pushStr('movieclip'),0x49,
       ...reg(2),...pushStr('copTint'),0x4E,...pushInt(1),0x49,0x12,0x10];
-    const tbodyIn=[...tcond,0x12,...act(0x9D,u16(tintCall.length)),...tintCall];
+    const isWall=[...isPre('wallA'),...isPre('wallB'),0x11,...isPre('obsta'),0x11,...isPre('block'),0x11];
+    const isText=[...pushInt(0),...reg(2),...pushStr('getDepth'),0x52,...pushNum(45-16384),0x49];
+    const txtPart=[...isText,0x12,...act(0x9D,u16(textTint.length)),...textTint];
+    const wallPart=[...isWall,0x12,...act(0x9D,u16(wallTint.length+5)),...wallTint,...act(0x99,u16(txtPart.length))];
+    const inner=[...wallPart,...txtPart];
+    const tbodyIn=[...okClip,0x12,...act(0x9D,u16(inner.length)),...inner];
     const tbody=[...reg(0),...pushInt(1),...pushInt(5),0x15,...store(1),0x17,
       ...pushStr('_level1'),0x1C,...reg(0),0x4E,...store(2),0x17,...tbodyIn];
     const head1=[...store(0),...act(0x96,[2]),0x49];
