@@ -1,5 +1,5 @@
 # 동현콥 상단 띠 SWF 만들기 (원본 SWF는 고치지 않는다)
-# 원본 'COPYRIGHT: SEETHRU.CO.UK' 자리를 같은 초록 줄무늬로 덮고, 동현콥 세그먼트 글자(tools/seg.py, MIT)로
+# 원본 'COPYRIGHT: SEETHRU.CO.UK' 자리를 동굴 벽과 같은 짙은 크림 줄무늬로 덮고, 동현콥 세그먼트 글자(tools/seg.py, MIT)로
 # 'TAKE FLIGHT WITH DONGHYUNCOP!'을 쓴다. 바깥 SWF가 이 파일을 원본 _level1의 54번 층(저작권 버튼 53번 바로 위,
 # 동굴 벽 100번 아래)에 불러온다. 결과: src/label.js (base64)
 # 쓰는 법: python3 tools/make-label.py
@@ -14,7 +14,7 @@ TW = 20                      # 1픽셀 = 20 twip
 CAP = 8.6                    # 글자 높이(px). 원본 글자 높이(약 8.5px)에 맞춤
 GAP, SPACE = 1.55, 4.0       # 글자 사이(px)와 낱말 사이(px)
 RIGHT, BASE = 347.0, 18.6    # 원본 글자 오른쪽 끝과 바닥(px)
-BAR, LINE, INK = (0x66, 0xFF, 0x66), (0x61, 0xF2, 0x61), (0x00, 0x00, 0x33)
+BAR, LINE, INK = (0xC9, 0xB4, 0x8C), (0xC4, 0xAB, 0x87), (0x00, 0x00, 0x33)   # 동굴 벽 색 변환 뒤의 짙은 크림·줄무늬와 같다
 COVER = (194.0, 351.0, 8.5, 20.5)   # 원본 글자를 덮는 칸(px): x0, x1, y0, y1
 HIT = (150.0, 360.0, 0.0, 26.0)     # 누르기를 받는 투명 칸(px). 원본 링크 단추를 덮는다
 

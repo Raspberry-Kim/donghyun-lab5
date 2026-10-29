@@ -60,7 +60,32 @@
     }
     // 포동이의 꼬리콥터: 같은 방식으로 _level1.copDog(501번 층)에 불러온다. 원본 헬리콥터는 onLoad에서 500번 층으로 옮겨지므로 그 바로 위다.
     // 포동이 SWF가 매 프레임 헬리콥터를 따라가고 원본 헬리콥터는 _alpha=0으로만 감춘다(경계·충돌 판정은 원본 그대로).
-    const label=[...loader('copLabel',54,labelUrl),...loader('copDog',501,dogUrl)];
+    // 동굴 벽·장애물 색: 원본 도형(0x66FF66 단색, 줄무늬 0x61F261)은 그대로 두고, 클립에 색 변환만 덧씌운다.
+    // 대상: wallA·wallB(위아래 띠), wallBlock…(위아래 벽 조각), obstacle…(장애물), blockController. 양옆의 wall1–4는 뺀다(검은 선이 물든다).
+    //   for(n in _level1){ p=substring(n,1,5); m=_level1[n];
+    //     if((p=="wallA"||p=="wallB"||p=="obsta"||p=="block") && typeof(m)=="movieclip" && m.copTint!=1){ m.copTint=1;
+    //       new Color(m).setTransform({ra:100,rb:99,ga:70.6,gb:0,ba:100,bb:38}) } }
+    // 0x66FF66 → 0xC9B48C(짙은 크림). 알파는 건드리지 않아 원본의 _alpha 바꾸기는 그대로 산다.
+    const reg=(r)=>act(0x96,[4,r]);
+    const store=(r)=>act(0x87,[r]);  // 레지스터 0: 이름, 1: 앞 다섯 글자, 2: 클립
+    const pushNum=(x)=>{const b=new ArrayBuffer(8),v=new DataView(b);v.setFloat64(0,x,true);const a=[...new Uint8Array(b)];return act(0x96,[6,...a.slice(4),...a.slice(0,4)]);};
+    const tf=[['ra',100],['rb',99],['ga',70.6],['gb',0],['ba',100],['bb',38]];
+    const tintCall=[...reg(2),...pushStr('copTint'),...pushInt(1),0x4F,
+      ...tf.flatMap(([k,x])=>[...pushStr(k),...(Number.isInteger(x)?pushInt(x):pushNum(x))]),...pushInt(tf.length),0x43,
+      ...pushInt(1),...reg(2),...pushInt(1),...pushStr('Color'),0x40,...pushStr('setTransform'),0x52,0x17];
+    const isPre=(w)=>[...reg(1),...pushStr(w),0x49];
+    const tcond=[...isPre('wallA'),...isPre('wallB'),0x11,...isPre('obsta'),0x11,...isPre('block'),0x11,
+      ...reg(2),0x44,...pushStr('movieclip'),0x49,0x10,
+      ...reg(2),...pushStr('copTint'),0x4E,...pushInt(1),0x49,0x12,0x10];
+    const tbodyIn=[...tcond,0x12,...act(0x9D,u16(tintCall.length)),...tintCall];
+    const tbody=[...reg(0),...pushInt(1),...pushInt(5),0x15,...store(1),0x17,
+      ...pushStr('_level1'),0x1C,...reg(0),0x4E,...store(2),0x17,...tbodyIn];
+    const head1=[...store(0),...act(0x96,[2]),0x49];
+    const jumpBack=(n)=>act(0x99,u16((-(n))&0xFFFF));
+    const loopLen=head1.length+5+tbody.length+5;
+    const tint=[...pushStr('_level1'),0x1C,0x55,
+      ...head1,...act(0x9D,u16(tbody.length+5)),...tbody,...jumpBack(loopLen)];
+    const label=[...loader('copLabel',54,labelUrl),...loader('copDog',501,dogUrl),...tint];
     const a2=[...check,...label,0];
     // 3번 프레임: 한 번 더 살피고 2번으로 돌아간다.
     const a3=[...check,...label,...act(0x81,u16(1)),0x06,0];
