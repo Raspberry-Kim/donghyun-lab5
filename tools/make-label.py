@@ -1,16 +1,18 @@
 # 동현콥 상단 띠 SWF 만들기 (원본 SWF는 고치지 않는다)
-# 원본 'COPYRIGHT: SEETHRU.CO.UK' 자리를 같은 초록 줄무늬로 덮고, DSEG14 Classic Bold(OFL 1.1) 글자로
+# 원본 'COPYRIGHT: SEETHRU.CO.UK' 자리를 같은 초록 줄무늬로 덮고, 동현콥 세그먼트 글자(tools/seg.py, MIT)로
 # 'TAKE FLIGHT WITH DONGHYUN-COP!'을 쓴다. 바깥 SWF가 이 파일을 원본 _level1의 54번 층(저작권 버튼 53번 바로 위,
 # 동굴 벽 100번 아래)에 불러온다. 결과: src/label.js (base64)
-# 쓰는 법: python3 tools/make-label.py path/to/DSEG14Classic-Bold.ttf
+# 쓰는 법: python3 tools/make-label.py
 import sys, base64, struct, os
-from fontTools.ttLib import TTFont
-from fontTools.pens.recordingPen import RecordingPen
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import seg
+from shapely.ops import unary_union
+from shapely.geometry.polygon import orient
 
 TEXT = 'TAKE FLIGHT WITH DONGHYUN-COP!'
 TW = 20                      # 1픽셀 = 20 twip
 CAP = 8.6                    # 글자 높이(px). 원본 글자 높이(약 8.5px)에 맞춤
-PITCH, SPACE = 6.5, 4.0      # 글자 간격(px). 원본(약 6.3px)에 맞춤
+GAP, SPACE = 1.55, 4.0       # 글자 사이(px)와 낱말 사이(px)
 RIGHT, BASE = 347.0, 18.6    # 원본 글자 오른쪽 끝과 바닥(px)
 BAR, LINE, INK = (0x66, 0xFF, 0x66), (0x61, 0xF2, 0x61), (0x00, 0x00, 0x33)
 COVER = (194.0, 351.0, 8.5, 20.5)   # 원본 글자를 덮는 칸(px): x0, x1, y0, y1
@@ -69,33 +71,24 @@ def box(x0, x1, y0, y1):
     q = lambda v: round(v * TW)
     return [(q(x0), q(y0)), (q(x1), q(y0)), (q(x1), q(y1)), (q(x0), q(y1))]
 
-def glyph_polys(font, ch, x, s):
-    gs = font.getGlyphSet(); cmap = font.getBestCmap()
-    def contours(name):
-        p = RecordingPen(); gs[name].draw(p); cs = []; cur = []
-        for o, a in p.value:
-            if o == 'moveTo': cur = [a[0]]
-            elif o == 'lineTo': cur.append(a[0])
-            elif o == 'closePath': cs.append(cur)
-            elif o == 'qCurveTo': raise ValueError('곡선 글자: ' + name)
-        return cs
-    if ch == '!':   # DSEG14에는 느낌표가 없다: 'I'의 가운데 세로 획 굵기로 긴 획과 떨어진 바닥 점을 그린다
-        cs = [[(346, 1000), (470, 1000), (470, 330), (408, 268), (346, 330)],
-              [(346, 0), (470, 0), (470, 124), (346, 124)]]
-    else:
-        cs = contours(cmap[ord(ch)])
-    out = []
-    for c in cs:
-        out.append([(round((x + (px - 99) * s) * TW), round((BASE - py * s) * TW)) for px, py in c])
-    return out
+def glyph_polys(ch, x, s):
+    """seg 글자를 합쳐(겹친 칸이 서로 지워지지 않게) twip 다각형으로 돌려준다."""
+    w, ps = seg.glyph(ch)
+    g = unary_union(ps); out = []
+    for p in getattr(g, 'geoms', [g]):
+        if p.is_empty: continue
+        if p.interiors: raise ValueError('구멍 있는 글자: ' + ch)
+        p = orient(p, sign=1.0)
+        out.append([(round((x + px * s) * TW), round((BASE - (seg.H - py) * s) * TW)) for px, py in list(p.exterior.coords)[:-1]])
+    return w * s, out
 
-def main(ttf):
-    font = TTFont(ttf); s = CAP / 1000
-    width = sum(SPACE if c == ' ' else PITCH for c in TEXT) - (PITCH - 618 * s)
+def main():
+    s = CAP / seg.H
+    width = sum(SPACE if c == ' ' else seg.glyph(c)[0] * s + GAP for c in TEXT) - GAP
     x = RIGHT - width; polys = []
     for c in TEXT:
         if c == ' ': x += SPACE; continue
-        polys += glyph_polys(font, c, x, s); x += PITCH
+        w, ps = glyph_polys(c, x, s); polys += ps; x += w + GAP
     x0, x1, y0, y1 = COVER
     stripes = [box(x0, x1, y, y + 1) for y in (1.5 + 5 * k for k in range(6)) if y0 <= y and y + 1 <= y1]
     # 1번 프레임: this.onPress로 누르기를 받아 원본 링크 단추에 닿지 않게 하고, 손 모양 커서는 끈다.
@@ -111,8 +104,8 @@ def main(ttf):
     swf = b'FWS' + bytes([6]) + struct.pack('<I', 8 + len(body)) + body
     b64 = base64.b64encode(swf).decode()
     dst = os.path.join(os.path.dirname(__file__), '..', 'src', 'label.js')
-    open(dst, 'w').write('/* 동현콥 상단 띠 SWF. tools/make-label.py가 만든다(글꼴: DSEG14 Classic Bold, SIL OFL 1.1). */\n'
+    open(dst, 'w').write('/* 동현콥 상단 띠 SWF. tools/make-label.py가 만든다(글꼴: 동현콥 세그먼트, MIT). */\n'
                          'const COP_LABEL_SWF=' + repr(b64) + ';\n')
     print(len(swf), 'bytes', 'text x0=%.1f' % (RIGHT - width))
 
-if __name__ == '__main__': main(sys.argv[1])
+if __name__ == '__main__': main()

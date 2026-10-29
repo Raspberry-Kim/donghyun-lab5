@@ -16,11 +16,26 @@
   }
   function pushStr(s){return act(0x96,[0,...enc(s)]);}
   function pushInt(n){return act(0x96,[7,...u32(n)]);}
-  function makeWrapper(fps,url,labelUrl){
+  function makeWrapper(fps,url,labelUrl,dogUrl){
     const f=Math.max(1,Math.min(255,fps));
     const whole=Math.floor(f),frac=Math.round((f-whole)*256)&255;
     // 1번 프레임: 원본을 _level1로 불러오고, 정리 여부 done을 0으로 둔다.
-    const a1=[...act(0x83,[...enc(url),...enc('_level1')]),...pushStr('done'),...pushInt(0),0x1D,0];
+    // 포동이를 쓰면 1번 프레임에서 MovieClip.prototype.swapDepths를 한 번 감싼다. 원본 헬리콥터는 생길 때 onLoad에서
+    // this.swapDepths(500)를 부르므로, 이름이 helicopter이면 그 자리에서 _alpha=0으로 감춘다(다시 시작한 첫 프레임에도 안 보인다).
+    //   if(typeof(MovieClip.prototype.copSwap)=="undefined"){ MovieClip.prototype.copSwap=MovieClip.prototype.swapDepths;
+    //     MovieClip.prototype.swapDepths=function(d){ if(this._name=="helicopter") this._alpha=0; this.copSwap(d); } }
+    let hook=[];
+    if(dogUrl){
+      const proto=[...pushStr('MovieClip'),0x1C,...pushStr('prototype'),0x4E];
+      const hide=[...pushStr('this'),0x1C,...pushStr('_alpha'),...pushInt(0),0x4F];
+      const fbody=[...pushStr('this'),0x1C,...pushStr('_name'),0x4E,...pushStr('helicopter'),0x49,0x12,...act(0x9D,u16(hide.length)),...hide,
+        ...pushStr('d'),0x1C,...pushInt(1),...pushStr('this'),0x1C,...pushStr('copSwap'),0x52,0x17];
+      const fn=act(0x9B,[0,...u16(1),...enc('d'),...u16(fbody.length)]);
+      const inst=[...proto,...pushStr('copSwap'),...proto,...pushStr('swapDepths'),0x4E,0x4F,
+        ...proto,...pushStr('swapDepths'),...fn,...fbody,0x4F];
+      hook=[...proto,...pushStr('copSwap'),0x4E,0x44,...pushStr('undefined'),0x49,0x12,...act(0x9D,u16(inst.length)),...inst];
+    }
+    const a1=[...hook,...act(0x83,[...enc(url),...enc('_level1')]),...pushStr('done'),...pushInt(0),0x1D,0];
     // 2·3번 프레임(매 프레임): 원본을 다 받은 뒤
     //   if(_level1._currentframe==4 || (!done && _level1._currentframe>4)){ done=1; tellTarget("_level1"){ gotoAndStop(3); gotoAndPlay(5) } }
     // Ruffle에서는 원본 3번 프레임의 _root.gotoAndPlay(5)가 4번 프레임을 그린 뒤에 실행되어, 안내 화면이 'start' 화면 위에 남는 일이 있다.
@@ -36,13 +51,16 @@
     // 상단 띠: 원본이 게임 프레임(5번)에 들어오면
     //   if(_level1._currentframe==5 && typeof(_level1.copLabel)!="movieclip"){ _level1.createEmptyMovieClip("copLabel",54); loadMovie(labelUrl,"_level1.copLabel") }
     // 54번 층은 원본 저작권 단추(53번) 바로 위, 동굴 벽(100번부터) 아래라서 시작·추락 화면에서만 보이고 비행 중에는 벽이 덮는다.
-    let label=[];
-    if(labelUrl){
-      const make=[...pushInt(54),...pushStr('copLabel'),...pushInt(2),...pushStr('_level1'),0x1C,...pushStr('createEmptyMovieClip'),0x52,0x17,
-        ...pushStr(labelUrl),...pushStr('_level1.copLabel'),...act(0x9A,[0x40])];
-      const has=[...pushStr('_level1'),0x1C,...pushStr('copLabel'),0x4E,0x44,...pushStr('movieclip'),0x49,...act(0x9D,u16(make.length)),...make];
-      label=[...prop(4),...pushInt(5),0x49,0x12,...act(0x9D,u16(has.length)),...has];
+    function loader(name,depth,u){
+      if(!u) return [];
+      const make=[...pushInt(depth),...pushStr(name),...pushInt(2),...pushStr('_level1'),0x1C,...pushStr('createEmptyMovieClip'),0x52,0x17,
+        ...pushStr(u),...pushStr('_level1.'+name),...act(0x9A,[0x40])];
+      const has=[...pushStr('_level1'),0x1C,...pushStr(name),0x4E,0x44,...pushStr('movieclip'),0x49,...act(0x9D,u16(make.length)),...make];
+      return [...prop(4),...pushInt(5),0x49,0x12,...act(0x9D,u16(has.length)),...has];
     }
+    // 포동이의 꼬리콥터: 같은 방식으로 _level1.copDog(501번 층)에 불러온다. 원본 헬리콥터는 onLoad에서 500번 층으로 옮겨지므로 그 바로 위다.
+    // 포동이 SWF가 매 프레임 헬리콥터를 따라가고 원본 헬리콥터는 _alpha=0으로만 감춘다(경계·충돌 판정은 원본 그대로).
+    const label=[...loader('copLabel',54,labelUrl),...loader('copDog',501,dogUrl)];
     const a2=[...check,...label,0];
     // 3번 프레임: 한 번 더 살피고 2번으로 돌아간다.
     const a3=[...check,...label,...act(0x81,u16(1)),0x06,0];

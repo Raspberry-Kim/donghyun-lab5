@@ -1,6 +1,6 @@
-# 동현콥 v0.1
+# 동현콥 v0.2
 
-누르면 오르고 떼면 내려가는 고전 플래시 헬리콥터 게임을 **원본 파일 그대로** 띄우고, 헬리콥터의 속력만 동현랭으로 정하는 원버튼 비행 실험실이다.
+누르면 오르고 떼면 내려가는 고전 플래시 동굴 비행 게임을 **원본 파일 그대로** 띄우고, 헬리콥터 대신 **포동이의 꼬리콥터**를 날리며 속력만 동현랭으로 정하는 원버튼 비행 실험실이다.
 동현 시리즈의 여섯 번째 작은 실험이다.
 
 바로 하기: https://raspberry-kim.github.io/donghyun-lab5/
@@ -34,7 +34,15 @@
 `src/wrapper.js`가 400×300 크기의 작은 바깥 SWF를 그때그때 만든다. 바깥 SWF는 해시를 확인한 원본 바이트를 `_level1`로 불러오고, 초당 프레임 수로 속력을 정한다.
 원본은 첫머리에서 Flash 5 명령으로 'start' 프레임(5번)에 넘어가고, 옛 플레이어에서만 '플러그인을 설치하라'는 4번 프레임에 멈춘다. Ruffle에서는 이 넘김이 4번 프레임을 그린 뒤에 일어나거나 일어나지 않아, 안내 화면이 남거나 멈춘다. 바깥 SWF는 원본이 4번 프레임을 거치면 3번으로 한 번 되감았다가 5번으로 넘겨 준다.
 
-게임 화면 위 띠의 원본 저작권 문구와 링크는 작은 띠 SWF(`src/label.js`)가 덮는다. 바깥 SWF가 원본이 5번 프레임에 들어오면 이 띠를 원본의 54번 층(저작권 단추 53번 바로 위, 동굴 벽 아래)에 불러온다. 그래서 시작·추락 화면에서는 "TAKE FLIGHT WITH DONGHYUN-COP!"이 보이고, 비행 중에는 원본처럼 벽이 덮는다. 띠는 `python3 tools/make-label.py <DSEG14Classic-Bold.ttf>`로 다시 만든다.
+게임 화면 위 띠의 원본 저작권 문구와 링크는 작은 띠 SWF(`src/label.js`)가 덮는다. 바깥 SWF가 원본이 5번 프레임에 들어오면 이 띠를 원본의 54번 층(저작권 단추 53번 바로 위, 동굴 벽 아래)에 불러온다. 그래서 시작·추락 화면에서는 "TAKE FLIGHT WITH DONGHYUN-COP!"이 보이고, 비행 중에는 원본처럼 벽이 덮는다. 띠는 `python3 tools/make-label.py`로 다시 만든다.
+
+## 포동이의 꼬리콥터
+
+원본 헬리콥터(sprite 50, 이름 `helicopter`)는 지우지 않고 `_alpha=0`으로만 감춘다. 크기·위치·충돌 판정은 원본 그대로다. 바깥 SWF는 1번 프레임에서 `MovieClip.prototype.swapDepths`를 한 번 감싼다. 원본 헬리콥터는 생길 때 `onLoad`에서 `this.swapDepths(500)`를 부르므로, 다시 시작한 첫 프레임에도 원래 그림이 비치지 않는다. 포동이 SWF(`src/dog.js`)는 `_level1.copDog`(501번 층, 헬리콥터 바로 위)에 불려 와 매 프레임 헬리콥터의 위치·기울기·크기를 따라간다. 몸체는 원본 몸체 경계 안에 두고, 원래 큰 날개가 돌던 납작한 회전면에서는 크림색 꼬리가 잔상 둘과 함께 돈다. 부딪히면(원본 `crash` 프레임) 꼬리가 멈추고 포동이가 데굴데굴 떨어지며 흐려진다. `python3 tools/make-dog.py`가 `assets/podongi.png`에서 꼬리를 떼어 다시 만든다.
+
+## 세그먼트 글꼴
+
+상단 띠와 아래 DISTANCE·BEST 숫자는 동현콥이 직접 그린 세그먼트 글꼴(`tools/seg.py`)을 쓴다. 7획에 K·N 대각선과 가운데 세로 획을 더했다. 원본의 두 숫자 칸은 SWF 안에 글꼴 모양이 없는 기기 글꼴(DS-Digital) 칸이라, Ruffle이 일반 글꼴로 크게 그리고 아래로 치우쳤다. `python3 tools/make-font.py`가 같은 글자로 숫자 TTF(`src/segfont.js`)를 만들고, Ruffle의 기본 글꼴로 넘긴다. 앞의 DISTANCE·BEST 글자와 높이·바닥선이 같다.
 
 ## 빌드
 
@@ -44,8 +52,8 @@ node build.cjs   # 원본 해시 확인 후 dist/와 루트 index.html(GitHub Pa
 
 ## 저작물에 관하여
 
-원본 게임 「Helicopter Game」의 권리는 원작자(디자인 David McCandless, 플래시 Leandro Barreto, SeeThru.co.uk)에게 있다. 이 저장소의 MIT 라이선스는 원본 SWF에 적용되지 않는다. 자세한 내용은 [CREDITS.md](CREDITS.md).
+원본 게임 「Helicopter Game」(헬리콥터 그림 포함, 화면에서는 감춤)의 권리는 원작자(디자인 David McCandless, 플래시 Leandro Barreto, SeeThru.co.uk)에게 있다. 이 저장소의 MIT 라이선스는 원본 SWF에 적용되지 않는다. 자세한 내용은 [CREDITS.md](CREDITS.md).
 
 ## 라이선스
 
-동현콥 코드·문서: MIT (김동현). 원본 SWF: 원작자 권리, MIT 아님. Ruffle: MIT 또는 Apache-2.0. 글꼴: Black Han Sans, 나눔고딕코딩, Pretendard, DSEG14 Classic(띠 글자) — 각각 SIL OFL 1.1 (`licenses/`).
+동현콥 코드·문서: MIT (김동현). 원본 SWF: 원작자 권리, MIT 아님. Ruffle: MIT 또는 Apache-2.0. 글꼴: Black Han Sans, 나눔고딕코딩, Pretendard — 각각 SIL OFL 1.1 (`licenses/`). 세그먼트 글꼴(띠 글자·숫자)은 동현콥이 그린 것으로 MIT. 포동이 그림(`assets/podongi.png`): 제공자 권리, 코드의 MIT와 따로 본다.

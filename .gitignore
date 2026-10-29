@@ -2,3 +2,4 @@ node_modules/
 dist/
 qa/*.png
 *.png.tmp
+tools/__pycache__/

@@ -56,7 +56,7 @@ const status=(t,kind)=>{const s=$('#status');s.textContent=t;s.dataset.kind=kind
 
 /* ---------- 원본 확인과 실행 ---------- */
 const hex=buf=>[...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,'0')).join('');
-let verified=null, player=null, speed=DEFAULT, swfUrl=null, labelUrl=null;
+let verified=null, player=null, speed=DEFAULT, swfUrl=null, labelUrl=null, segFontUrl=null, dogUrl=null;
 async function verify(){
   if(verified!==null) return verified;
   try{
@@ -82,12 +82,17 @@ async function launch(v){
   player.id='player';
   stage.appendChild(player);
   if(!labelUrl) labelUrl=URL.createObjectURL(new Blob([Uint8Array.from(atob(COP_LABEL_SWF),c=>c.charCodeAt(0))],{type:'application/x-shockwave-flash'}));
-  const wrapper=makeWrapper(fpsOf(v),swfUrl,labelUrl);
+  // DISTANCE·BEST 숫자 칸은 SWF 안에 글꼴 모양이 없는 기기 글꼴 칸이다. 같은 세그먼트 숫자 글꼴을 기본 글꼴로 넘긴다.
+  if(!segFontUrl&&window.DONGHYUN_SEGFONT_B64) segFontUrl=URL.createObjectURL(new Blob([Uint8Array.from(atob(window.DONGHYUN_SEGFONT_B64),c=>c.charCodeAt(0))],{type:'font/ttf'}));
+  const segName=window.DONGHYUN_SEGFONT_NAME;
+  const fontCfg=segFontUrl?{fontSources:[segFontUrl],defaultFonts:{sans:[segName],serif:[segName],typewriter:[segName]}}:{};
+  if(!dogUrl&&typeof COP_DOG_SWF!=='undefined') dogUrl=URL.createObjectURL(new Blob([Uint8Array.from(atob(COP_DOG_SWF),c=>c.charCodeAt(0))],{type:'application/x-shockwave-flash'}));
+  const wrapper=makeWrapper(fpsOf(v),swfUrl,labelUrl,dogUrl);
   await player.ruffle().load({
     data:wrapper, swfFileName:'donghyun-cop.swf', base:new URL('./',location.href).href,
     autoplay:'on', unmuteOverlay:'hidden', splashScreen:false, contextMenu:'off', letterbox:'on',
     allowFullscreen:false, openUrlMode:'deny', allowNetworking:'all', warnOnUnsupportedContent:false,
-    showSwfDownload:false, quality:'high', publicPath:'./ruffle/'
+    showSwfDownload:false, quality:'high', publicPath:'./ruffle/', ...fontCfg
   });
   speed=v; status(`속력 ${v}% · 누르면 시작`);
 }

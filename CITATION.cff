@@ -1,9 +1,9 @@
 cff-version: 1.2.0
 message: "If you use this software, please cite it using the metadata below."
-title: "Donghyuncop (동현콥): a one-button flight laboratory that runs a classic Flash helicopter game unmodified and sets its speed through the esoteric language Donghyun-lang"
+title: "Donghyuncop (동현콥): a one-button flight laboratory that runs a classic Flash cave-flight game unmodified, flies Podongi's tail-copter, and sets its speed through the esoteric language Donghyun-lang"
 type: software
-version: "0.1"
-date-released: "2026-10-29"
+version: "0.2"
+date-released: "2026-10-30"
 authors:
   - family-names: Kim
     given-names: Dong Hyun
@@ -18,15 +18,19 @@ abstract: >-
   McCandless, Flash Leandro Barreto) from the original SWF file, byte for byte
   unmodified and verified by SHA-256 at every load, through the Ruffle
   emulator. The only control is the left mouse button or a touch on the game
-  screen. The only setting, the helicopter speed (50-200 percent, 100 being
+  screen. The original helicopter is kept in the file
+  but made transparent, so its bounds and collisions are unchanged, and a
+  separate overlay SWF draws Podongi, a cream dog whose spinning tail takes
+  the place of the main rotor. The only setting, the flight speed (50-200 percent, 100 being
   the original 30 frames per second), is chosen through a program written in
   the esoteric programming language Donghyun-lang. A small generated wrapper
   SWF loads the original into _level1, sets the frame rate, and works around
   a Ruffle frame-ordering issue without changing the original. The MIT
   license applies to the Donghyuncop code and documentation only; the
   original SWF remains the property of its authors and is not covered by it.
-  Ruffle is under MIT or Apache-2.0 and the fonts under the SIL Open Font
-  License. See LICENSE and CREDITS.md.
+  The Podongi artwork is treated separately from the code license. Ruffle
+  is under MIT or Apache-2.0 and the page fonts under the SIL Open Font
+  License; the segment font is original (MIT). See LICENSE and CREDITS.md.
 keywords:
   - Flash
   - Ruffle
