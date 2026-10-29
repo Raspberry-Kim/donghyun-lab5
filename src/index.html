@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="ko" data-theme="light">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="고전 플래시 헬리콥터 게임을 원본 그대로 띄우고 속도만 동현랭으로 정하는 원버튼 비행 실험실이다.">
+  <title>동현콥™ · 누르면 오르고 떼면 내려가는 작은 비행</title>
+  <link rel="icon" type="image/x-icon" sizes="16x16 32x32 48x48" href="./favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="./favicon.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+<header class="header">
+  <a class="brand" href="#" aria-label="동현콥 첫 화면으로"><span class="brand-main"><img class="brand-icon" src="__BRAND_ICON__" alt="" width="96" height="96">동현<span>콥</span><sup>TM</sup></span><i class="brand-divider"></i><span class="brand-sub">COPTER LAB<small>누르면 오르고 떼면 내려가는 작은 비행</small></span></a>
+  <div class="edition">v0.1<button id="theme" class="icon-btn" aria-label="밝은 화면과 어두운 화면 전환" title="화면 전환" aria-pressed="false"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></button></div>
+</header>
+<main>
+__SERIES_NAV__
+  <section class="intro">
+    <div><div class="eyebrow">ONE-BUTTON FLIGHT × ESOTERIC LANGUAGE</div><h1>원버튼 비행 실험실: <span class="title-brand">동현<span>콥</span><sup>TM</sup></span></h1><p>고전 플래시 헬리콥터 게임을 <strong>원본 파일 그대로</strong> 띄우고, 속도만 <strong>동현랭</strong>으로 정한다.</p></div>
+    <div class="model-stamp"><strong>1 <span>버튼</span></strong><strong id="stamp-speed">100 <span>% 속도</span></strong><small>원본 SWF 그대로 · 효과음 3개 · 속도 50~200</small></div>
+  </section>
+  <nav class="tabs" aria-label="동현콥 메뉴"><button class="active" data-tab="play" aria-current="page">비행</button><button data-tab="protocol">동현콥 속도 규약</button><button data-tab="controls">조작과 소리</button><button data-tab="about">원작과 출처</button><span>속도는 동현랭으로, 비행은 누르기로</span></nav>
+  <div class="getting-started"><p><strong>처음이라면?</strong> 예제를 고르고 <b>이륙</b>을 눌러 보자. 헬리콥터의 속도는 모두 <b>동현랭</b> 명령으로만 정한다.</p><a href="https://raspberry-kim.github.io/donghyun-lang/" target="_blank" rel="noopener">동현랭 배우기 · 실행기 ↗</a></div>
+
+  <section class="tab-panel" id="tab-play">
+    <div class="play-grid">
+      <div class="field-col">
+        <div class="section-title"><h2><span>A</span> 비행</h2><span id="status" role="status">원본을 불러오는 중</span></div>
+        <div class="stage-wrap">
+          <div class="stage" id="stage" aria-label="헬리콥터 게임 화면. 누르고 있으면 오르고, 떼면 내려간다."></div>
+          <div class="stage-bottom"><span><b>누르기</b> 오르기 · <b>떼기</b> 내려가기</span><span id="hash" class="hash">SHA-256 확인 중</span></div>
+        </div>
+      </div>
+      <div class="side-col">
+        <div class="section-title"><h2><span>B</span> 동현랭 속도 코드</h2><span>speed.dh</span></div>
+        <div class="dh-panel">
+          <div class="dh-head"><select id="example" aria-label="동현랭 속도 예제 선택"></select><span class="dh-spacer"></span><button id="run" class="dh-btn dh-run" title="Ctrl/⌘ + Enter"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15l12-7.5z"></path></svg>이륙 <kbd>⌘↵</kbd></button></div>
+          <div class="code-wrap"><div id="lines" aria-hidden="true"></div><textarea id="code" aria-label="동현랭 속도 코드" spellcheck="false" autocomplete="off" autocapitalize="off"></textarea></div>
+          <div class="code-meta dh-status"><span id="line-count"></span><span>정수 하나 출력 → 속도 · ⌘/Ctrl ↵ 실행</span></div>
+        </div>
+        <p id="example-note"></p>
+        <div class="sortie-card" id="speed-card"></div>
+        <p id="result" aria-live="polite">예제를 고른 뒤 이륙을 눌러 보자. 속도는 코드로만 정한다.</p>
+        <div class="file-row"><button id="save">.dh 저장</button><label class="file-label">.dh 열기<input id="open" type="file" accept=".dh,.txt,text/plain" hidden></label></div>
+      </div>
+    </div>
+    <div class="workflow"><span>동현랭 코드</span><b>→</b><span>속도</span><b>→</b><span>이륙</span><b>→</b><span>누르기로 비행</span><b>→</b><span>거리 기록</span></div>
+  </section>
+
+  <section class="tab-panel document" id="tab-protocol" hidden>
+    <div class="doc-heading"><div class="eyebrow">SPEED PROTOCOL</div><h2>동현콥 속도 규약</h2></div>
+    <div class="doc-columns">
+      <div>
+        <h3>정하는 것은 속도 하나다</h3>
+        <ul>
+          <li>동현랭 코드가 출력한 <strong>정수 하나</strong>가 헬리콥터의 속도(%)다.</li>
+          <li><code>100</code>은 원본 그대로다. 원본의 초당 30프레임으로 돈다.</li>
+          <li>쓸 수 있는 값은 <code>50</code>부터 <code>200</code>까지다. 50이면 절반 속도(초당 15프레임), 200이면 두 배(초당 60프레임)다.</li>
+          <li>아무것도 출력하지 않으면 100으로 난다. 정수를 둘 이상 출력하거나 범위를 벗어나면 이륙하지 않고 오류를 알려 준다.</li>
+        </ul>
+        <h3>예제</h3>
+        <p>예제는 <strong>01 · 원본 그대로</strong> 하나다. <code>뿡뿡 도오오오오오오오오오옹 도오오오오오오오오오옹~뿡뿡뿡</code>은 10×10=100을 출력한다. 숫자를 바꿔 보자. 예를 들어 <code>도오오오오오오오오오옹 도오오오오오오오오오옹 도오옹</code>은 200이다.</p>
+      </div>
+      <div>
+        <h3>속도를 바꾸는 방법</h3>
+        <p>원본 SWF는 고치지 않는다. 동현콥은 400×300 크기의 작은 바깥 SWF를 그때그때 만들고, 원본을 그 안의 <code>_level1</code>로 불러온다. 바깥 SWF의 초당 프레임 수가 <code>30 × 속도 ÷ 100</code>이다. 플래시는 맨 아래 무비의 프레임 수로 전체를 돌리므로, 헬리콥터와 벽이 함께 빨라지거나 느려진다.</p>
+        <p>바깥 SWF는 한 가지 일을 더 한다. 원본은 첫머리에서 Flash 5 명령으로 'start' 프레임에 넘어가고, 그 명령을 못 알아듣는 옛 플레이어에서만 '플러그인을 설치하라'는 4번 프레임에 멈춘다. Ruffle에서는 이 넘김이 4번 프레임을 그린 뒤에 일어나거나 아예 일어나지 않아, 안내 화면이 남거나 4번 프레임에 멈춘다. 그래서 원본이 4번 프레임을 거치면 바깥 SWF가 3번으로 한 번 되감았다가 원래 가야 할 5번 'start' 프레임으로 넘겨 준다. 원본의 명령도 그림도 바꾸지 않는다.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="tab-panel document" id="tab-controls" hidden>
+    <div class="doc-heading"><div class="eyebrow">CONTROLS & SOUND</div><h2>조작과 소리</h2></div>
+    <div class="doc-columns">
+      <div>
+        <h3>조작은 하나뿐이다</h3>
+        <ul>
+          <li><strong>데스크톱:</strong> 게임 화면에서 마우스 왼쪽 버튼을 누르고 있으면 헬리콥터가 오른다. 떼면 내려간다.</li>
+          <li><strong>태블릿·모바일:</strong> 게임 화면을 손가락으로 누르고 있으면 오르고, 떼면 내려간다.</li>
+          <li>천장·바닥·장애물에 부딪히면 끝난다. 다시 누르면 새 비행이 시작된다.</li>
+          <li>게임 화면 위에서는 페이지가 움직이지 않도록 스크롤과 확대를 막아 두었다.</li>
+        </ul>
+      </div>
+      <div>
+        <h3>소리</h3>
+        <ul>
+          <li>원본에 들어 있는 효과음 3개(오를 때, 내려갈 때, 부딪힐 때)가 그대로 난다.</li>
+          <li>브라우저는 사용자가 한 번 누르기 전에는 소리를 막는다. 그래서 첫 누르기와 함께 소리가 켜진다.</li>
+          <li>iPhone·iPad에서 무음 스위치가 켜져 있으면 소리가 나지 않을 수 있다.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="tab-panel document" id="tab-about" hidden>
+    <div class="doc-heading"><div class="eyebrow">ORIGINAL & CREDITS</div><h2>원작과 출처</h2></div>
+    <div class="doc-columns">
+      <div>
+        <h3>원본 파일</h3>
+        <p>게임은 <strong>Helicopter Game</strong>(SeeThru.co.uk) 플래시 파일이다. 한 바이트도 고치지 않고 그대로 실었다. 설계는 David McCandless, 플래시 프로그래밍은 Leandro Barreto로 알려져 있다(<a href="https://www.mobygames.com/game/163119/helicopter-game/" target="_blank" rel="noopener">MobyGames</a>).</p>
+        <p>파일 <code>swf/helicopter-game.swf</code> · 44,807바이트<br>SHA-256 <code class="wrap">ed5fbfd0ca488edc6d94c275c609d894d43d87e72922f76332333034cca7e071</code></p>
+        <p>이 페이지는 열 때마다 받은 파일의 SHA-256을 다시 계산하고, 값이 같을 때만 게임을 띄운다. 속도를 바꿔도 원본은 그대로이고, 바깥 SWF의 초당 프레임 수만 바뀐다.</p>
+        <h3>권리</h3>
+        <p>게임 파일의 권리는 원저작자에게 있다. 동현콥은 SeeThru.co.uk와 관계가 없고 승인도 받지 않았다. 동현콥 코드에 붙는 MIT 라이선스는 이 게임 파일에 적용되지 않는다.</p>
+      </div>
+      <div>
+        <h3>플래시 실행</h3>
+        <p>요즘 브라우저는 플래시를 돌리지 않는다. 그래서 오픈소스 플래시 에뮬레이터 <a href="https://ruffle.rs/" target="_blank" rel="noopener">Ruffle</a> 0.7.1을 저장소 안에 함께 실었다. Ruffle은 MIT 또는 Apache-2.0 라이선스다.</p>
+        <h3>동현콥이 만든 것</h3>
+        <p>페이지 구성, 동현랭 속도 규약, 바깥 SWF 생성기, 원본 확인 장치, 터치 조작 정리, 문서. 이 부분은 MIT 라이선스다. 동현랭 실행기(<code>donghyun.js</code>)는 <a href="https://github.com/Raspberry-Kim/donghyun-lang" target="_blank" rel="noopener">동현랭</a> v1.53을 고치지 않고 썼다.</p>
+        <h3>글꼴</h3>
+        <p>Black Han Sans, Nanum Gothic Coding, Pretendard — SIL Open Font License 1.1.</p>
+      </div>
+    </div>
+  </section>
+</main>
+<footer><span>동현콥 v0.1 · 인하대학교 의과대학 교수 김동현</span><span>원본 SWF 그대로 · 속도만 동현랭으로 · Ruffle 0.7.1</span><span><a href="https://raspberry-kim.github.io/donghyun-lang/" target="_blank" rel="noopener">동현랭</a> · <a href="https://raspberry-kim.github.io/donghyun-lab1/" target="_blank" rel="noopener">동현초</a> · <a href="https://raspberry-kim.github.io/donghyun-lab2/" target="_blank" rel="noopener">동현파</a> · <a href="https://raspberry-kim.github.io/donghyun-lab3/" target="_blank" rel="noopener">동현빌</a> · <a href="https://raspberry-kim.github.io/donghyun-lab4/" target="_blank" rel="noopener">동현전</a></span></footer>
+<script src="./ruffle/ruffle.js"></script>
+<script src="./app.js"></script>
+</body>
+</html>
