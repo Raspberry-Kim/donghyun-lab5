@@ -4,6 +4,7 @@ title: "Donghyuncop (동현콥): a one-button flight laboratory that runs a clas
 type: software
 version: "0.2"
 date-released: "2026-10-30"
+doi: "10.5281/zenodo.23787094"
 authors:
   - family-names: Kim
     given-names: Dong Hyun
