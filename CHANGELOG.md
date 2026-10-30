@@ -5,6 +5,7 @@
 - 동굴 벽(위아래)·장애물·상단 띠의 연두색을 플레이그라운드에 맞춘 짙은 크림색(0xC9B48C, 줄무늬 0xC4AB87)으로 바꿈. 원본 SWF는 그대로(해시 같음), 바깥 SWF가 wallA·wallB·wallBlock·obstacle·blockController 클립에 색 변환만 덧씌움. 알파는 건드리지 않음
 - 시작 화면 문구(CLICK TO START, CLICK AND HOLD…)의 색: 청록(0x33CCFF·0x33FFFF) → 0xF09A7C. 크림 0xC9B48C와 포동이 옷 빨강 0xE83B32의 중간을 밝힌 색. 원본 45번 층 클립에 색 변환만 덧씌움
 - 편집기 들여쓰기를 동현랭 시리즈와 같게: ㅋㅋ 주석 세 칸, 명령 두 칸, 시작·끝 줄은 그대로. 커서는 들여쓰기 뒤로, 들여쓰기 바로 뒤 Backspace는 윗줄과 합침
+- 「원작과 출처」와 README에 '만든 사람' 추가
 - 이름 표기: DONGHYUN-COP → DONGHYUNCOP
 - 시리즈 띠에 동현텐 추가(7칸)
 

@@ -57,3 +57,7 @@ node build.cjs   # 원본 해시 확인 후 dist/와 루트 index.html(GitHub Pa
 ## 라이선스
 
 동현콥 코드·문서: MIT (김동현). 원본 SWF: 원작자 권리, MIT 아님. Ruffle: MIT 또는 Apache-2.0. 글꼴: Black Han Sans, 나눔고딕코딩, Pretendard — 각각 SIL OFL 1.1 (`licenses/`). 세그먼트 글꼴(띠 글자·숫자)은 동현콥이 그린 것으로 MIT. 포동이 그림(`assets/podongi.png`): 제공자 권리, 코드의 MIT와 따로 본다.
+
+## 만든 사람
+
+인하대학교 의과대학 김동현 교수는 백신학·감염학을 연구한다. 명랑하고 따뜻한 개발을 지향한다.
