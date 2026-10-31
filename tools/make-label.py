@@ -13,6 +13,7 @@ TEXT = 'TAKE FLIGHT WITH PODONG-COPTER'
 TW = 20                      # 1픽셀 = 20 twip
 CAP = 8.6                    # 글자 높이(px). 원본 글자 높이(약 8.5px)에 맞춤
 GAP, SPACE = 1.55, 4.0       # 글자 사이(px)와 낱말 사이(px)
+SMALL_O = 0.88               # D 옆 O의 크기 비율
 RIGHT, BASE = 347.0, 18.6    # 원본 글자 오른쪽 끝과 바닥(px)
 BAR, LINE, INK = (0xC9, 0xB4, 0x8C), (0xC4, 0xAB, 0x87), (0x00, 0x00, 0x33)   # 동굴 벽 색 변환 뒤의 짙은 크림·줄무늬와 같다
 COVER = (194.0, 351.0, 8.5, 20.5)   # 원본 글자를 덮는 칸(px): x0, x1, y0, y1
@@ -84,11 +85,13 @@ def glyph_polys(ch, x, s):
 
 def main():
     s = CAP / seg.H
-    width = sum(SPACE if c == ' ' else seg.glyph(c)[0] * s + GAP for c in TEXT) - GAP
+    # D 바로 옆의 O는 조금 작게(바닥은 맞춘다): 세그먼트 글꼴에서 O와 D가 너무 닮아 PODONG을 읽기 어렵다.
+    sc = [s * SMALL_O if c == 'O' and 'D' in (TEXT[i-1:i] + TEXT[i+1:i+2]) else s for i, c in enumerate(TEXT)]
+    width = sum(SPACE if c == ' ' else seg.glyph(c)[0] * k + GAP for c, k in zip(TEXT, sc)) - GAP
     x = RIGHT - width; polys = []
-    for c in TEXT:
+    for c, k in zip(TEXT, sc):
         if c == ' ': x += SPACE; continue
-        w, ps = glyph_polys(c, x, s); polys += ps; x += w + GAP
+        w, ps = glyph_polys(c, x, k); polys += ps; x += w + GAP
     x0, x1, y0, y1 = COVER
     stripes = [box(x0, x1, y, y + 1) for y in (1.5 + 5 * k for k in range(6)) if y0 <= y and y + 1 <= y1]
     # 1번 프레임: this.onPress로 누르기를 받아 원본 링크 단추에 닿지 않게 하고, 손 모양 커서는 끈다.
