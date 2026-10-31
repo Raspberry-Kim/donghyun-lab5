@@ -23,13 +23,14 @@ S = {
 def k_up():  return diag((XL+T*0.35, YM+0.35), (W+0.25, -0.35), (T+G*0.6, 0, W, YM-G*0.5))
 def k_dn():  return diag((XL+T*0.35, YM-0.35), (W+0.25, H+0.35), (T+G*0.6, YM+G*0.5, W, H))
 def n_dg():  return LineString([(XL+T*0.45, YT+0.15), (XR-T*0.45, YB-0.15)]).buffer(T*0.5, cap_style='flat').intersection(box(T+G*0.8, YT+G, W-T-G*0.8, YB-G))
+def r_dg():  return diag((XC-0.1, YM+0.1), (W+0.25, H+0.35), (XC-0.2, YM+G*0.5, W, H))
 def d_corner(top):
     y = YT if top else YB
     return [hseg(XL, XR-1.05, y, cut1=True)] 
 GLYPHS = {
  'A': 'a f b g e c', 'C': 'a f e d', 'E': 'a f g e d', 'F': 'a f g e', 'G': 'a f e d c gr', 'H': 'f e b c g',
  'L': 'f e d', 'N': 'f e b c', 'O': 'a b c d e f', 'P': 'a f b g e', 'T': 'a h i', 'U': 'f e b c d',
- 'W': 'f e b c d i', 'Y': 'f b g c d', '-': 'g', 'K': 'f e', 'D': 'f e', 'I': '', '!': '',
+ 'R': 'a f b g e', 'W': 'f e b c d i', 'Y': 'f b g c d', '-': 'g', 'K': 'f e', 'D': 'f e', 'I': '', '!': '',
 }
 def glyph(ch):
     """(너비, [shapely 다각형]) 단위는 H=9 기준."""
@@ -39,6 +40,7 @@ def glyph(ch):
     ps = [S[k]() for k in GLYPHS[ch].split()]
     if ch == 'K': ps += [k_up(), k_dn()]
     if ch == 'N': ps += [n_dg()]
+    if ch == 'R': ps += [r_dg()]
     if ch == 'D':
         r = 1.25  # 위·아래 획이 오른쪽 모서리에서 비스듬히 꺾여 내려오는 D
         up = LineString([(XL+G+T*0.5, YT), (XR-r, YT), (XR, YT+r), (XR, YM-G)]).buffer(T/2, cap_style='flat', join_style='mitre')

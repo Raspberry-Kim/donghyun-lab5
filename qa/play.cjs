@@ -8,7 +8,7 @@ const U=process.env.U||'http://localhost:8765/';
   await p.addInitScript(()=>{const A=window.AudioContext;window.__ac=[];window.AudioContext=class extends A{constructor(...a){super(...a);window.__ac.push(this)}};});
   await p.goto(U);await p.waitForFunction(()=>document.querySelector('#status').textContent.includes('Ruffle')||document.querySelector('#status').textContent.includes('다')||document.querySelector('#status').textContent.includes('누르면'),null,{timeout:30000});
   await p.waitForTimeout(2500);
-  console.log('status',await p.textContent('#status'),'|',await p.textContent('#hash'));
+  console.log('status',await p.textContent('#status'));
   await p.screenshot({path:'d-0.png'});
   const box=await (await p.$('#stage')).boundingBox();
   const cx=box.x+box.width/2,cy=box.y+box.height/2;

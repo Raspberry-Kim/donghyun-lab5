@@ -70,6 +70,21 @@ function speedCard(v){
 const result=(t,kind)=>{const r=$('#result');r.textContent=t;r.dataset.kind=kind||'';};
 const status=(t,kind)=>{const s=$('#status');s.textContent=t;s.dataset.kind=kind||'';};
 
+/* ---------- 휴대폰 소리 ----------
+   휴대폰 브라우저는 손가락을 뗄 때(touchend·click)만 소리를 허락한다. 게임 화면은 확대·스크롤을 막느라
+   touchend를 취소하므로 Ruffle이 기다리는 click이 오지 않는다. Ruffle이 만든 소리 장치를 붙잡아 두었다가
+   게임 화면에서 손가락을 뗄 때 직접 연다. */
+const audioCtxs=[];
+(()=>{ const A=window.AudioContext||window.webkitAudioContext; if(!A) return;
+  const Hooked=class extends A{ constructor(...a){ super(...a); audioCtxs.push(this); } };
+  window.AudioContext=Hooked; if(window.webkitAudioContext) window.webkitAudioContext=Hooked; })();
+function wakeAudio(){
+  for(const c of audioCtxs){ if(c.state==='closed') continue;
+    if(c.state!=='running'){ try{ const r=c.resume(); if(r&&r.catch) r.catch(()=>{}); }catch(e){}
+      try{ const s=c.createBufferSource(); s.buffer=c.createBuffer(1,1,22050); s.connect(c.destination); s.start(0); }catch(e){} } }
+}
+['touchend','pointerup','click','keydown'].forEach(t=>document.addEventListener(t,wakeAudio,{capture:true,passive:true}));
+
 /* ---------- 원본 확인과 실행 ---------- */
 const hex=buf=>[...new Uint8Array(buf)].map(b=>b.toString(16).padStart(2,'0')).join('');
 let verified=null, player=null, speed=DEFAULT, swfUrl=null, labelUrl=null, segFontUrl=null, dogUrl=null;
@@ -80,11 +95,9 @@ async function verify(){
     const data=await res.arrayBuffer();
     let ok=data.byteLength===SIZE, digest='';
     if(crypto.subtle){ digest=hex(await crypto.subtle.digest('SHA-256',data)); ok=ok&&digest===SHA256; }
-    $('#hash').textContent=digest?(ok?'원본과 같음 · SHA-256 '+digest.slice(0,12)+'…':'원본과 다름'):'크기 '+data.byteLength.toLocaleString()+'바이트';
-    $('#hash').classList.toggle('ok',ok);
     if(ok) swfUrl=URL.createObjectURL(new Blob([data],{type:'application/x-shockwave-flash'})); // 확인한 바로 그 바이트를 띄운다
     verified=ok;
-  }catch(e){ verified=false; $('#hash').textContent='원본을 받지 못했다'; }
+  }catch(e){ verified=false; }
   return verified;
 }
 async function launch(v){

@@ -160,7 +160,7 @@ footer a{color:var(--muted)}
 .stage-msg{position:absolute;inset:0;display:grid;place-items:center;padding:24px;color:#efe6d8;text-align:center;font-size:var(--text-sm)}
 .stage-bottom{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-top:10px;font-size:var(--text-xs);color:var(--muted)}
 .stage-bottom b{color:var(--ink)}
-.hash{font-family:var(--mono)}.hash.ok{color:#3d7a1f}[data-theme=dark] .hash.ok{color:#9ad16b}
+
 .link-btn{min-height:0;border:0;border-bottom:2px solid var(--accent);border-radius:0;background:transparent;padding:6px 0;font-weight:700;white-space:nowrap}
 .link-btn:hover{background:transparent!important}
 .document ul{padding-left:1.2em;margin:8px 0}

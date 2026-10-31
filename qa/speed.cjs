@@ -9,7 +9,7 @@ const U=process.env.U||'http://localhost:8765/';
   await p.goto(U);
   await p.waitForFunction(()=>/속력 \d+%/.test(document.querySelector('#status').textContent),null,{timeout:40000});
   await p.waitForTimeout(3000);
-  console.log('init',await p.textContent('#status'),'|',await p.textContent('#hash'),'|',await p.textContent('#speed-card'));
+  console.log('init',await p.textContent('#status'),'|',await p.textContent('#speed-card'));
   await p.screenshot({path:'s-100.png'});
   const box=await (await p.$('#stage')).boundingBox();const cx=box.x+box.width/2,cy=box.y+box.height/2;
   await p.mouse.click(cx,cy);await p.waitForTimeout(300);
