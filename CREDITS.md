@@ -10,7 +10,7 @@
 ## 동현콥이 새로 만든 것
 
 - 페이지 구성, 동현랭 속력 규약과 예제, 바깥 SWF 생성기(`src/wrapper.js`), 상단 띠 SWF(`src/label.js`, `tools/make-label.py`로 생성), 포동이의 꼬리콥터 SWF(`src/dog.js`, `tools/make-dog.py`로 생성), 세그먼트 글꼴(`tools/seg.py`, `tools/make-font.py`), 원본 해시 확인, 터치 조작 정리, 문서.
-- 동현랭 실행기(`src/donghyun.js`)는 [동현랭 저장소](https://github.com/Raspberry-Kim/donghyun-lang)의 v1.54을 고치지 않고 썼다.
+- 동현랭 실행기(`src/donghyun.js`)는 [동현랭 저장소](https://github.com/Raspberry-Kim/donghyun-lang)의 v1.55을 고치지 않고 썼다.
 
 ## 이용 조건
 

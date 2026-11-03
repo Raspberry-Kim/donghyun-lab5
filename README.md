@@ -1,4 +1,4 @@
-# 동현콥 v0.3
+# 동현콥 v0.31
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23787094.svg)](https://doi.org/10.5281/zenodo.23787094)
 
