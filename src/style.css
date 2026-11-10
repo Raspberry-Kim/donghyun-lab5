@@ -189,3 +189,9 @@ code.wrap{word-break:break-all}
 .mark-tip.show{opacity:1}.mark-tip b{color:#f2b705;font-weight:700}
 .mark-tip::before{content:"";position:absolute;top:-6px;left:var(--ax,50%);width:12px;height:12px;background:#1f1c18;transform:translateX(-50%) rotate(45deg);border-radius:2px}
 @media(max-width:780px){.model-stamp{display:flex!important;justify-content:flex-end;margin-top:8px}.model-stamp>:not(.input-marks){display:none}.input-marks{margin-top:0;gap:22px}.input-marks svg{width:36px;height:36px}}
+
+/* 동현랭 후원 배지: 만든 사람 옆(동현랭 .sponsor-btn과 같은 모양) */
+.maker-note a.sponsor-btn{display:inline-flex;align-items:center;gap:.35em;margin-left:10px;vertical-align:middle;font-size:var(--text-xs);font-weight:600;line-height:1.4;padding:.25em .75em;border-radius:999px;border:1px solid var(--line);background:var(--paper);color:var(--ink);text-decoration:none;letter-spacing:0;text-transform:none}
+.maker-note a.sponsor-btn:hover{background:var(--surface2)}
+.maker-note a.sponsor-btn svg{color:#bf3989;flex:none}
+[data-theme=dark] .maker-note a.sponsor-btn{color:var(--ink)}[data-theme=dark] .maker-note a.sponsor-btn svg{color:#db61a2}
