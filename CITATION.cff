@@ -2,7 +2,7 @@ cff-version: 1.2.0
 message: "If you use this software, please cite it using the metadata below."
 title: "Donghyuncop (동현콥): a one-button flight laboratory that runs a classic Flash cave-flight game unmodified, flies Podongi's tail-copter, and sets its speed through the esoteric language Donghyun-lang"
 type: software
-version: "0.37"
+version: "0.38"
 date-released: "2026-11-14"
 doi: "10.5281/zenodo.23787094"
 authors:
