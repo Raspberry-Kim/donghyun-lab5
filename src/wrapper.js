@@ -50,7 +50,7 @@
     const check=[...cond,0x12,...act(0x9D,u16(body.length)),...body];
     // 상단 띠: 원본이 게임 프레임(5번)에 들어오면
     //   if(_level1._currentframe==5 && typeof(_level1.copLabel)!="movieclip"){ _level1.createEmptyMovieClip("copLabel",54); loadMovie(labelUrl,"_level1.copLabel") }
-    // 54번 층은 원본 저작권 단추(53번) 바로 위, 동굴 벽(100번부터) 아래라서 시작·추락 화면에서만 보이고 비행 중에는 벽이 덮는다.
+    // 54번 층은 원본 저작권 버튼(53번) 바로 위, 동굴 벽(100번부터) 아래라서 시작·추락 화면에서만 보이고 비행 중에는 벽이 덮는다.
     function loader(name,depth,u){
       if(!u) return [];
       const make=[...pushInt(depth),...pushStr(name),...pushInt(2),...pushStr('_level1'),0x1C,...pushStr('createEmptyMovieClip'),0x52,0x17,

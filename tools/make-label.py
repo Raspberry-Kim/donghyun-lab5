@@ -17,7 +17,7 @@ SMALL_O = 0.88               # D 옆 O의 크기 비율
 RIGHT, BASE = 347.0, 18.6    # 원본 글자 오른쪽 끝과 바닥(px)
 BAR, LINE, INK = (0xC9, 0xB4, 0x8C), (0xC4, 0xAB, 0x87), (0x00, 0x00, 0x33)   # 동굴 벽 색 변환 뒤의 짙은 크림·줄무늬와 같다
 COVER = (194.0, 351.0, 8.5, 20.5)   # 원본 글자를 덮는 칸(px): x0, x1, y0, y1
-HIT = (150.0, 360.0, 0.0, 26.0)     # 누르기를 받는 투명 칸(px). 원본 링크 단추를 덮는다
+HIT = (150.0, 360.0, 0.0, 26.0)     # 누르기를 받는 투명 칸(px). 원본 링크 버튼을 덮는다
 
 class Bits:
     def __init__(s): s.b = []
@@ -94,7 +94,7 @@ def main():
         w, ps = glyph_polys(c, x, k); polys += ps; x += w + GAP
     x0, x1, y0, y1 = COVER
     stripes = [box(x0, x1, y, y + 1) for y in (1.5 + 5 * k for k in range(6)) if y0 <= y and y + 1 <= y1]
-    # 1번 프레임: this.onPress로 누르기를 받아 원본 링크 단추에 닿지 않게 하고, 손 모양 커서는 끈다.
+    # 1번 프레임: this.onPress로 누르기를 받아 원본 링크 버튼에 닿지 않게 하고, 손 모양 커서는 끈다.
     def push_str(v): d = b'\x00' + v.encode() + b'\x00'; return b'\x96' + struct.pack('<H', len(d)) + d
     fn = b'\x9b' + struct.pack('<H', 5) + b'\x00' + struct.pack('<HH', 0, 0)   # function(){} (이름 없음, 인자 0, 몸통 0)
     act = (push_str('this') + b'\x1c' + push_str('onPress') + fn + b'\x4f'
