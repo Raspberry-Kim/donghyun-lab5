@@ -1,4 +1,5 @@
 // 속력 50/100/200·오류 규약을 확인하고 화면을 남긴다.
+process.chdir(__dirname); // 화면 그림은 qa/ 안에 남긴다(.gitignore의 qa/*.png)
 const {chromium}=require('playwright');
 const U=process.env.U||'http://localhost:8765/';
 (async()=>{

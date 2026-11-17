@@ -1,3 +1,4 @@
+process.chdir(__dirname); // 화면 그림은 qa/ 안에 남긴다(.gitignore의 qa/*.png)
 const {chromium}=require('playwright');
 (async()=>{
   const b=await chromium.launch();

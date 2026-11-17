@@ -1,4 +1,5 @@
 // 추락 뒤 다시 누르면 새 비행이 시작되는지, 모바일 터치로도 되는지 본다.
+process.chdir(__dirname); // 화면 그림은 qa/ 안에 남긴다(.gitignore의 qa/*.png)
 const {chromium,devices}=require('playwright');
 (async()=>{
   const b=await chromium.launch();

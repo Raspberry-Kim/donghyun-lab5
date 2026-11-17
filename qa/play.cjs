@@ -1,4 +1,5 @@
 // 데스크톱: 원본 확인 → Ruffle 실행 → 누르고 있기 → 떼기, 소리 상태와 화면을 기록
+process.chdir(__dirname); // 화면 그림은 qa/ 안에 남긴다(.gitignore의 qa/*.png)
 const {chromium}=require('playwright');
 const U=process.env.U||'http://localhost:8765/';
 (async()=>{
